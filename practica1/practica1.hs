@@ -145,16 +145,16 @@ sumar n m = n + m
 cantidadDePokemon :: TipoPokemon -> Entrenador -> Int
 cantidadDePokemon t  (E _ p1 p2)  = sumar (unoSiEsDelMismoTipo t (tipoDePokemon p1)) (unoSiEsDelMismoTipo t (tipoDePokemon p2))
 
+unoSiEsDelMismoTipo :: TipoPokemon ->  TipoPokemon -> Int
+unoSiEsDelMismoTipo t1 t2 = if(esDelMismoTipo t1 t2)
+                            then 1
+                            else 0
+                            
 esDelMismoTipo ::  TipoPokemon -> TipoPokemon -> Bool
 esDelMismoTipo Agua   Agua   = True
 esDelMismoTipo Fuego  Fuego  = True
 esDelMismoTipo Planta Planta = True
 esDelMismoTipo  _       _    = False
-
-unoSiEsDelMismoTipo :: TipoPokemon ->  TipoPokemon -> Int
-unoSiEsDelMismoTipo t1 t2 = if(esDelMismoTipo t1 t2)
-                            then 1
-                            else 0
 
 
 
