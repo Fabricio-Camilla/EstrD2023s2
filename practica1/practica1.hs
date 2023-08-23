@@ -34,9 +34,11 @@ iguales Oeste Oeste  = True
 iguales _     _      = False
 
 siguiente :: Dir -> Dir
+--PRECOND: Oeste no se puede utilizar
 siguiente Norte = Este
 siguiente Este  = Sur
 siguiente Sur   = Norte
+siguiente Oeste = error "La direccion Oeste no esta contemplada"
 
 
 data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domingo
@@ -63,8 +65,8 @@ numeroDia Sabado    = 6
 numeroDia Domingo   = 7
 
 estaEnElMedio :: DiaDeSemana -> Bool
-estaEnElMedio _ = True
-estaEnElMedio primeroYUltimoDia = False
+estaEnElMedio d = numeroDia d >= 2 && numeroDia d <= 6
+
 
 negar :: Bool -> Bool
 negar True  = False
@@ -141,25 +143,33 @@ sumar :: Int -> Int -> Int
 sumar n m = n + m
 
 cantidadDePokemon :: TipoPokemon -> Entrenador -> Int
-cantidadDePokemon t  (E _ p1 p2)  = sumar (unoSiEsDelMismoTipoCeroSiNo t (tipoDePokemon p1)) (unoSiEsDelMismoTipoCeroSiNo t (tipoDePokemon p2))
+cantidadDePokemon t  (E _ p1 p2)  = sumar (unoSiEsDelMismoTipo t (tipoDePokemon p1)) (unoSiEsDelMismoTipo t (tipoDePokemon p2))
 
 
-unoSiEsDelMismoTipoCeroSiNo :: TipoPokemon ->  TipoPokemon -> Int
-unoSiEsDelMismoTipoCeroSiNo Agua   Agua   = 1
-unoSiEsDelMismoTipoCeroSiNo Fuego  Fuego  = 1
-unoSiEsDelMismoTipoCeroSiNo Planta Planta = 1
-unoSiEsDelMismoTipoCeroSiNo  _      _     = 0 
+unoSiEsDelMismoTipo :: TipoPokemon ->  TipoPokemon -> Int
+unoSiEsDelMismoTipo Agua   Agua   = 1
+unoSiEsDelMismoTipo Fuego  Fuego  = 1
+unoSiEsDelMismoTipo Planta Planta = 1
+unoSiEsDelMismoTipo  t1      t2     = (ceroSiNoEsDelMismoTipo t1 t2)
+
+ceroSiNoEsDelMismoTipo :: TipoPokemon -> TipoPokemon -> Int
+ceroSiNoEsDelMismoTipo Agua   _ = 0 
+ceroSiNoEsDelMismoTipo Planta _ = 0
+ceroSiNoEsDelMismoTipo Fuego  _ = 0
 
 
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
-juntarPokemon ((E _ p1 p2), (E _ p3 p4)) = [p1, p2, p3, p4]
+juntarPokemon (e1, e2) = (pokemonsDe e1) ++ (pokemonsDe e2)
 
+
+pokemonsDe :: Entrenador -> [Pokemon] 
+pokemonsDe (E _ p1 p2) = [p1,p2]
 
 
 entrenador1 = E "sho" poke1 poke2
 entrenador = E "el" poke2 poke1
 poke1 = Po Agua 30
-poke2 = Po Planta 20
+poke2 = Po Agua 20
 
 loMismo :: a -> a
 loMismo x = x
@@ -182,8 +192,10 @@ elPrimero    []   = error "No puede ser una lista vacia"
 elPrimero (x: _ ) = x
 
 sinElPrimero :: [a] -> [a]
+--PRECOND: La lista no puede estar vacia.
+sinElPrimero   []     = error "No puede ser una lista vacia"
 sinElPrimero (_ : xs) = xs
-sinElPrimero   []     = []
+
 
 splitHead :: [a] -> (a,[a])
 --PRECOND: La lista no puede estar vacia
