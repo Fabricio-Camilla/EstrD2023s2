@@ -1,8 +1,7 @@
 sucesor :: Int -> Int
 sucesor n = n + 1
 
-sumar :: Int -> Int -> Int
-sumar n m = n + m
+
 
 divisionYResto :: Int -> Int -> (Int, Int)
 divisionYResto n m = (div n m, mod n m)
@@ -22,10 +21,10 @@ data Dir = Norte | Este | Sur | Oeste
     deriving Show
     
 opuesto :: Dir -> Dir 
-opuesto Norte = Sur 
-opuesto Este  = Oeste 
+opuesto Norte = Este
+opuesto Este  = Sur 
 opuesto Sur   = Norte 
-opuesto Oeste = Este 
+ 
 
 iguales :: Dir -> Dir -> Bool
 iguales Norte Norte  = True
@@ -37,8 +36,8 @@ iguales _     _      = False
 siguiente :: Dir -> Dir
 siguiente Norte = Este
 siguiente Este  = Sur
-siguiente Sur   = Oeste
-siguiente Oeste = Norte
+siguiente Sur   = Norte
+
 
 data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domingo
  deriving Show
@@ -46,38 +45,25 @@ primeroYUltimoDia :: (DiaDeSemana, DiaDeSemana)
 primeroYUltimoDia = (Lunes, Domingo)
 
 empiezaConM :: DiaDeSemana -> Bool
-empiezaConM  Lunes     = False
 empiezaConM  Martes    = True
 empiezaConM  Miercoles = True
-empiezaConM  Jueves    = False
-empiezaConM  Viernes   = False
-empiezaConM  Sabado    = False
-empiezaConM  Domingo   = False
+empiezaConM  _         = False
 
 
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
-vieneDespues Martes  Lunes     = True
-vieneDespues Miercoles Lunes   = True
-vieneDespues Miercoles Martes  =True
-vieneDespues Jueves  Miercoles = True
-vieneDespues Jueves  Martes = True
-vieneDespues Jueves  Lunes = True
-vieneDespues Viernes Jueves    = True
-vieneDespues Viernes Miercoles    = True
-vieneDespues Viernes Martes   = True
-vieneDespues Viernes Lunes    = True
-vieneDespues Sabado  Viernes   = True
-vieneDespues Domingo Sabado    = True
-vieneDespues Lunes   Domingo   = True
-vieneDespues _        _        = False
+vieneDespues d1 d2 = numeroDia d1 > numeroDia d2
 
+numeroDia :: DiaDeSemana -> Int
+numeroDia Lunes     = 1
+numeroDia Martes    = 2
+numeroDia Miercoles = 3
+numeroDia Jueves    = 4
+numeroDia Viernes   = 5 
+numeroDia Sabado    = 6
+numeroDia Domingo   = 7
 
 estaEnElMedio :: DiaDeSemana -> Bool
-estaEnElMedio Martes            = True
-estaEnElMedio Miercoles         = True
-estaEnElMedio Jueves            = True
-estaEnElMedio Viernes           = True
-estaEnElMedio Sabado            = True
+estaEnElMedio _ = True
 estaEnElMedio primeroYUltimoDia = False
 
 negar :: Bool -> Bool
@@ -85,17 +71,20 @@ negar True  = False
 negar False = True
 
 implica :: Bool -> Bool -> Bool
-implica True False = False
-implica  _    _    = True
+implica True  b = b
+implica False _ = True
+
 
 yTambien :: Bool -> Bool -> Bool
-yTambien True True = True
-yTambien  _     _  = False
+yTambien True b1 = b1
+yTambien _  _    = False
+
 
 oBien :: Bool -> Bool -> Bool
-oBien True  _     = True
-oBien  _   True   = True
-oBien False False = False
+oBien True _  = True
+oBien  _   b1 = b1
+
+
 
 data Persona = P Int  String 
             -- edad    nombre
@@ -108,7 +97,7 @@ edad :: Persona -> Int
 edad (P e _) = e 
 
 crecer :: Persona -> Persona
-crecer (P e n) =  (P(e + 1) n)
+crecer (P e n) =  P (e + 1) n
 
 cambioDeNombre :: String -> Persona -> Persona
 cambioDeNombre n (P e _ ) = P e n
@@ -136,14 +125,14 @@ data Entrenador = E String Pokemon Pokemon
                    --nombre
 
 superaA :: Pokemon -> Pokemon -> Bool
-superaA p1   p2    = esDeTipo(tipoDePokemon p1) (tipoDePokemon p2)
+superaA p1   p2    = esDeTipoSuperador(tipoDePokemon p1) (tipoDePokemon p2)
 
 
-esDeTipo :: TipoPokemon -> TipoPokemon -> Bool
-esDeTipo Agua Fuego   = True
-esDeTipo Fuego Planta = True
-esDeTipo Planta Agua  = True
-esDeTipo _        _   = False
+esDeTipoSuperador :: TipoPokemon -> TipoPokemon -> Bool
+esDeTipoSuperador Agua   Fuego   = True
+esDeTipoSuperador Fuego  Planta  = True
+esDeTipoSuperador Planta Agua    = True
+esDeTipoSuperador _        _     = False
 
 tipoDePokemon :: Pokemon -> TipoPokemon
 tipoDePokemon (Po t _) = t
@@ -152,12 +141,15 @@ sumar :: Int -> Int -> Int
 sumar n m = n + m
 
 cantidadDePokemon :: TipoPokemon -> Entrenador -> Int
-cantidadDePokemon t  (E _ p1 p2)  = sumar (cantidadSiEsDeTipo (t) (tipoDePokemon p1)) (cantidadSiEsDeTipo (t) (tipoDePokemon p2))
+cantidadDePokemon t  (E _ p1 p2)  = sumar (unoSiEsDelMismoTipoCeroSiNo t (tipoDePokemon p1)) (unoSiEsDelMismoTipoCeroSiNo t (tipoDePokemon p2))
 
 
-cantidadSiEsDeTipo :: TipoPokemon ->  TipoPokemon -> Int
-cantidadSiEsDeTipo t1 t2  = 1
-cantidadSiEsDeTipo t1 _   = 0
+unoSiEsDelMismoTipoCeroSiNo :: TipoPokemon ->  TipoPokemon -> Int
+unoSiEsDelMismoTipoCeroSiNo Agua   Agua   = 1
+unoSiEsDelMismoTipoCeroSiNo Fuego  Fuego  = 1
+unoSiEsDelMismoTipoCeroSiNo Planta Planta = 1
+unoSiEsDelMismoTipoCeroSiNo  _      _     = 0 
+
 
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 juntarPokemon ((E _ p1 p2), (E _ p3 p4)) = [p1, p2, p3, p4]
@@ -167,7 +159,7 @@ juntarPokemon ((E _ p1 p2), (E _ p3 p4)) = [p1, p2, p3, p4]
 entrenador1 = E "sho" poke1 poke2
 entrenador = E "el" poke2 poke1
 poke1 = Po Agua 30
-poke2 = Po Agua 20
+poke2 = Po Planta 20
 
 loMismo :: a -> a
 loMismo x = x
@@ -182,13 +174,18 @@ swap (x,y) = (y,x)
 
 estaVacia :: [a] -> Bool
 estaVacia []  = True
-estaVacia [x] = False
+estaVacia (_:_) = False
 
 elPrimero :: [a] -> a
+--PRECOND: La lista no puede estar vacia
+elPrimero    []   = error "No puede ser una lista vacia"
 elPrimero (x: _ ) = x
 
 sinElPrimero :: [a] -> [a]
-sinElPrimero (_ : x) = x
+sinElPrimero (_ : xs) = xs
+sinElPrimero   []     = []
 
 splitHead :: [a] -> (a,[a])
-splitHead x = ((elPrimero x),( sinElPrimero x))
+--PRECOND: La lista no puede estar vacia
+splitHead x  = (elPrimero x,sinElPrimero x)
+splitHead [] = error "No puede ser una lista vacia"
