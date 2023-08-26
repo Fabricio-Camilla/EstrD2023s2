@@ -143,13 +143,15 @@ sumar :: Int -> Int -> Int
 sumar n m = n + m
 
 cantidadDePokemon :: TipoPokemon -> Entrenador -> Int
-cantidadDePokemon t  (E _ p1 p2)  = unoSiEsDelMismoTipo t (tipoDePokemon p1) + unoSiEsDelMismoTipo t (tipoDePokemon p2)
+cantidadDePokemon t  (E _ p1 p2)  = sumarSiEsDelMismoTipo t (tipoDePokemon p1) + sumarSiEsDelMismoTipo t (tipoDePokemon p2)
 
-unoSiEsDelMismoTipo :: TipoPokemon ->  TipoPokemon -> Int
-unoSiEsDelMismoTipo t1 t2 = if(esDelMismoTipo t1 t2)
-                            then 1
-                            else 0
-                            
+sumarSiEsDelMismoTipo :: TipoPokemon ->  TipoPokemon -> Int
+sumarSiEsDelMismoTipo t1 t2 = unoSiCeroSiNo (esDelMismoTipo t1 t2)
+
+unoSiCeroSiNo :: Bool -> Int
+unoSiCeroSiNo True = 1
+unoSiCeroSiNo   _  = 0
+
 esDelMismoTipo ::  TipoPokemon -> TipoPokemon -> Bool
 esDelMismoTipo Agua   Agua   = True
 esDelMismoTipo Fuego  Fuego  = True
@@ -169,7 +171,7 @@ pokemonsDe (E _ p1 p2) = [p1,p2]
 entrenador1 = E "sho" poke1 poke2
 entrenador = E "el" poke2 poke1
 poke1 = Po Fuego 30
-poke2 = Po Fuego 20
+poke2 = Po Agua 20
 
 loMismo :: a -> a
 loMismo x = x
