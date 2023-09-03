@@ -93,12 +93,12 @@ elMinimo (a:as) = min a (elMinimo as)
 
 factorial :: Int -> Int
 factorial 0 = 1
-factorial n = n * n + factorial (n-1) 
+factorial n = n * factorial (n-1) 
 
 --ej2 
 cuentaRegresiva :: Int -> [Int]
 cuentaRegresiva 0 = []
-cuentaRegresiva n = if n <= 0 && n >= 1 then n : cuentaRegresiva (n-1) else []
+cuentaRegresiva n = if n > 0 then n : cuentaRegresiva (n-1) else []
 
 --ej3
 repetir :: Int -> a -> [a]
@@ -215,9 +215,7 @@ losPokemonDeTipoQueLeGana t (p1:ps1)  ps2  = if sonDelMismoTipo t (tipoDe p1)
 
 leGanaATodos :: Pokemon -> [Pokemon] -> Bool
 leGanaATodos  p   []     =  True
-leGanaATodos  p (p1:ps1) = if sonDelMismoTipo (tipoDe p)  (tipoDe p1)   
-                           then leGanaATodos p ps1
-                           else leGanaPorTipo (tipoDe p) (tipoDe p1) && leGanaATodos p ps1
+leGanaATodos  p (p1:ps1) =  leGanaPorTipo (tipoDe p) (tipoDe p1) && leGanaATodos p ps1
 
 tieneMasEnergia :: Pokemon -> Pokemon -> Bool
 tieneMasEnergia p1 p2 = energia p1 > energia p2
@@ -266,7 +264,7 @@ proyectosDeRolesSinRepetidos (r:rs) = agregarSinRepetir (proyectoDe r) (proyecto
 
 agregarSinRepetir :: Proyecto -> [Proyecto] -> [Proyecto]
 agregarSinRepetir p  []    = [p]
-agregarSinRepetir p (x:xs) = if sonPoryectosIguales x p
+agregarSinRepetir p (x:xs) = if sonPoryectosIguales x p  
                             then agregarSinRepetir p xs
                             else x : agregarSinRepetir p xs
 
