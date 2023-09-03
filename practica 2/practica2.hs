@@ -10,12 +10,11 @@ longitud (a:as) = 1 + longitud as
 --ej3
 sucesor :: [Int] -> [Int]
 sucesor []     = []
-sucesor (n:ns) = [n + 1] ++ sucesor ns
+sucesor (n:ns) = n + 1 : sucesor ns
 
 --ej4
 conjuncion :: [Bool] -> Bool
-conjuncion []     = False
-conjuncion [x]    = x  -- sin este x== True
+conjuncion []     = True
 conjuncion (x:xs) = x  && conjuncion xs
 
 --ej5
@@ -36,12 +35,9 @@ pertenece a (x:xs) = x == a || pertenece a xs
 --ej8
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0
-apariciones a (x:xs) = unoSiEsIgualCeroSiNo a x + apariciones a xs
+apariciones a (x:xs) = unoSiCeroSiNo (a == x) + apariciones a xs
 
-unoSiEsIgualCeroSiNo :: Eq a => a -> a -> Int
-unoSiEsIgualCeroSiNo a1 a2 = if a1==a2
-                    then 1
-                    else 0
+
 --ej9
 losMenoresA :: Int -> [Int] -> [Int]
 losMenoresA  _ []     = []
@@ -68,15 +64,15 @@ agregar (a:as) bs = a  : agregar as bs
 --ej13
 reversa :: [a] -> [a]
 reversa []     = []
-reversa (a:as) = reversa as ++ [a]
+reversa (a:as) = agregar(reversa as)  [a]
 
 --ej14
 zipMaximos :: [Int] -> [Int] -> [Int]
 zipMaximos  ns       []    = ns
 zipMaximos  []       ms    = ms
 zipMaximos (n:ns) (m:ms)   = if n>m 
-                           then [n] ++ zipMaximos ns ms
-                           else [m] ++ zipMaximos ns ms
+                           then n : zipMaximos ns ms
+                           else m : zipMaximos ns ms
 
 
 --zipMaximos [1,2,3,4,5] [2,3,5]
@@ -96,13 +92,13 @@ elMinimo (a:as) = min a (elMinimo as)
 --llegar a 0. Si n es 0 devuelve 1. La función es parcial si n es negativo.
 
 factorial :: Int -> Int
-factorial n = 0
+factorial 0 = 1
 factorial n = n * n + factorial (n-1) 
 
 --ej2 
 cuentaRegresiva :: Int -> [Int]
 cuentaRegresiva 0 = []
-cuentaRegresiva n = if n >= 1 then n : cuentaRegresiva (n-1) else []
+cuentaRegresiva n = if n <= 0 && n >= 1 then n : cuentaRegresiva (n-1) else []
 
 --ej3
 repetir :: Int -> a -> [a]
@@ -143,7 +139,8 @@ esMayor (P _ e1) e2 = e1 > e2
 --ej2
 promedioEdad :: [Persona] -> Int
         --PRECOND: La lista debe tener al menos una persona
-promedioEdad    p   = div (sumatoriaEdad p) (length p) 
+promedioEdad [] = error "La lista no debe estar vacia"  
+promedioEdad p  = div (sumatoriaEdad p) (length p) 
 
 sumatoriaEdad :: [Persona] -> Int
 sumatoriaEdad    []  =  0
@@ -155,6 +152,7 @@ edad (P _ e) = e
 --ej3
 elMasViejo :: [Persona] -> Persona
           --PRECOND: La lista debe tener al menos una persona
+elMasViejo  []    = error "La lista no debe estar vacia"
 elMasViejo  [p]   = p
 elMasViejo (x:xs) = if edad x > edad (elMasViejo xs)
                     then x
@@ -218,7 +216,7 @@ losPokemonDeTipoQueLeGana t (p1:ps1)  ps2  = if sonDelMismoTipo t (tipoDe p1)
 leGanaATodos :: Pokemon -> [Pokemon] -> Bool
 leGanaATodos  p   []     =  True
 leGanaATodos  p (p1:ps1) = if sonDelMismoTipo (tipoDe p)  (tipoDe p1)   
-                           then (tieneMasEnergia p p1) && (leGanaATodos p ps1)
+                           then leGanaATodos p ps1
                            else leGanaPorTipo (tipoDe p) (tipoDe p1) && leGanaATodos p ps1
 
 tieneMasEnergia :: Pokemon -> Pokemon -> Bool
