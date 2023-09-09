@@ -143,7 +143,7 @@ sizeT (NodeT a t1 t2) = 1 + sizeT t1 + sizeT t2
 --ej3
 mapDobleT :: Tree Int -> Tree Int
 mapDobleT EmptyT          = EmptyT
-mapDobleT (NodeT a t1 t2) = (NodeT (a*2) (mapDobleT t1)  (mapDobleT t2))
+mapDobleT (NodeT a t1 t2) = NodeT (a*2) (mapDobleT t1)  (mapDobleT t2)
 
 
 --ej4
@@ -174,7 +174,7 @@ heightT (NodeT a t1 t2) = 1 + max (heightT t1)  (heightT t2)
 --ej8
 mirrorT :: Tree a -> Tree a
 mirrorT EmptyT          =  EmptyT
-mirrorT (NodeT a t1 t2) =  (NodeT a (mirrorT t2) (mirrorT t1))   
+mirrorT (NodeT a t1 t2) =  NodeT a (mirrorT t2) (mirrorT t1)
 
 --ej9
 toList :: Tree a -> [a]
@@ -232,19 +232,33 @@ eval :: ExpA ->  Int
 eval (Valor x)    = x
 eval (Sum x1 x2)  = (eval x1) + (eval x2)
 eval (Prod x1 x2) = (eval x1) * (eval x2)
-eval (Neg  x )    = (-eval x)
+eval (Neg  x)    = -eval x
 
 --ej2
---dudosisisimo
+
 simplificar :: ExpA -> ExpA
-simplificar (Sum (Valor 0) e)  = simplificar e 
-simplificar (Sum e (Valor 0))  = simplificar e 
-simplificar (Prod (Valor 0) _) = Valor 0       
-simplificar (Prod _ (Valor 0)) = Valor 0       
-simplificar (Prod (Valor 1) e) = simplificar e 
-simplificar (Prod e (Valor 1)) = simplificar e 
-simplificar (Neg (Neg e))     = simplificar e 
-simplificar e                 = e   
+simplificar (Valor n)       = Valor n
+simplificar (Sum ex1 ex2)   = simpSuma (simplificar ex1) (simplificar ex2)
+simplificar (Prod ex1 ex2)  = simpProd (simplificar ex1) (simplificar ex2)
+simplificar (Neg ex1)       = simpNeg  (simplificar ex1)
+
+
+simpSuma :: ExpA -> ExpA -> ExpA 
+simpSuma  ex1       (Valor 0) = ex1
+simpSuma (Valor 0)    ex1     = ex1
+simpSuma ex1          ex2     = Sum ex1 ex2
+
+simpProd :: ExpA -> ExpA -> ExpA
+simpProd (Valor 1)   ex2       = ex2
+simpProd ex1        (Valor 1)  = ex1 
+simpProd (Valor 0)    ex2      = Valor 0 
+simpProd ex1        (Valor 0)  = Valor 0
+simpProd ex1          ex2      = Prod ex1 ex2
+
+simpNeg :: ExpA -> ExpA 
+simpNeg (Neg (Neg (ex1))) = ex1
+simpNeg     ex1           = Neg ex1
+
 
 --a) 0 + x = x + 0 = x
 --b) 0 * x = x * 0 = 0
