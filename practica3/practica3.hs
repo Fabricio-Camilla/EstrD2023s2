@@ -73,7 +73,7 @@ pasosHastaTesoro (Cofre obs c) = if  tieneTesoro obs
 --ej3
 {-indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
 pasos es 5, indica si hay un tesoro en 5 pasos.-}
-camino =  Cofre [Cacharro, Cacharro, Tesoro, Tesoro,Tesoro,Cacharro](Nada(Nada Fin))
+camino =  Cofre [Cacharro, Cacharro,Tesoro,Tesoro,Cacharro](Nada(Nada Fin))
 
 hayTesoroEn :: Int -> Camino -> Bool
 hayTesoroEn 0  c            = hayTerosoroAhora c 
@@ -87,7 +87,13 @@ hayTerosoroAhora         _     = False
 
 --ej4
 alMenosNTesoros :: Int -> Camino -> Bool
-alMenosNTesoros n  c  =  n <= cantidadTesorosEn c
+alMenosNTesoros 0    _            = True
+alMenosNTesoros _    Fin          = False
+alMenosNTesoros n  (Nada c)       = alMenosNTesoros n c
+alMenosNTesoros n  (Cofre obs c)  = alMenosNTesoros (n - (cantTesoros obs )) c
+  
+  
+-- n <= cantidadTesorosEn c
 
 cantidadTesorosEn :: Camino -> Int
 cantidadTesorosEn Fin           =  0
@@ -149,7 +155,7 @@ mapDobleT (NodeT a t1 t2) = NodeT (a*2) (mapDobleT t1)  (mapDobleT t2)
 --ej4
 perteneceT :: Eq a => a -> Tree a -> Bool
 perteneceT _ EmptyT           = False
-perteneceT e (NodeT x t1 t2) = e==x || perteneceT e t1 || perteneceT e t2
+perteneceT e (NodeT x t1 t2)  = e==x || perteneceT e t1 || perteneceT e t2
 
 --ej5
 aparicionesT :: Eq a => a -> Tree a -> Int
@@ -158,8 +164,8 @@ aparicionesT e (NodeT x t1 t2) = unoSiCeroSiNo (e==x) + aparicionesT e t1 + apar
 
 --ej6
 leaves :: Tree a -> [a]
-leaves EmptyT                  = []
-leaves (NodeT a t1 t2)         = if esVacia t1 && esVacia t2 then [a] else leaves t1 ++ leaves t2
+leaves EmptyT           = []
+leaves (NodeT a t1 t2)  = if esVacia t1 && esVacia t2 then [a] else leaves t1 ++ leaves t2
 
 esVacia :: Tree a -> Bool
 esVacia EmptyT = True
@@ -257,7 +263,7 @@ simpProd ex1          ex2      = Prod ex1 ex2
 
 simpNeg :: ExpA -> ExpA 
 simpNeg (Neg (Neg (ex1))) = ex1
-simpNeg     ex1           = Neg ex1
+simpNeg     ex1           = ex1
 
 
 --a) 0 + x = x + 0 = x
