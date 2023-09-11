@@ -69,3 +69,33 @@ esAceituna    _  = False
 cantCapasPorPizza :: [Pizza] -> [(Int, Pizza)]
 cantCapasPorPizza    []   = []
 cantCapasPorPizza  (p:ps) = (cantidadDeCapas p , p) :  cantCapasPorPizza ps 
+
+
+data Dir = Izq | Der
+data Objeto = Tesoro | Chatarra
+data Cofre = Cofre [Objeto]
+data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
+
+camino =  (Bifurcacion (Cofre []) (Fin (Cofre[])) (Fin (Cofre[Tesoro])))
+--ej1
+hayTesoro :: Mapa -> Bool
+hayTesoro (Fin cof)              = hayTerosoroAhora cof
+hayTesoro (Bifurcacion co m1 m2 )= hayTerosoroAhora co || hayTesoro m1 || hayTesoro m2 
+
+hayTerosoroAhora :: Cofre -> Bool
+hayTerosoroAhora (Cofre obs) = tieneTesoro obs
+hayTerosoroAhora         _   = False
+
+tieneTesoro :: [Objeto] -> Bool
+tieneTesoro []     = False
+tieneTesoro (x:xs) =  esTesoro x ||  tieneTesoro xs
+
+esTesoro :: Objeto -> Bool
+esTesoro Tesoro = True
+esTesoro    _   = False
+
+--ej2
+
+hayTesoroEn :: [Dir] -> Mapa -> Bool
+hayTesoroEn    []             (Fin cof)        =
+hayTesoroEn (dir:dirs) (Bifurcacion cof m1 m2) = 
