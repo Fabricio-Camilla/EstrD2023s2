@@ -96,6 +96,34 @@ esTesoro    _   = False
 
 --ej2
 
-hayTesoroEn :: [Dir] -> Mapa -> Bool
-hayTesoroEn    []             (Fin cof)        =
-hayTesoroEn (dir:dirs) (Bifurcacion cof m1 m2) = 
+--hayTesoroEn :: [Dir] -> Mapa -> Bool
+--hayTesoroEn    []             (Fin cof)        =
+--hayTesoroEn (dir:dirs) (Bifurcacion cof m1 m2) = 
+
+
+
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
+
+data Barril = Comida | Oxigeno | Torpedo | Combustible
+
+data Sector = S SectorId [Componente] [Tripulante]
+
+type SectorId = String
+
+type Tripulante = String
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+
+data Nave = N (Tree Sector)
+
+nave=N(NodeT S("sector1",[LanzaTorpedos], ["sho"]) S("sector2", [LanzaTorpedos], ["sho2"]) )
+
+--ej1
+sectores :: Nave -> [SectorId]
+--Propósito: Devuelve todos los sectores de la nave.
+sectores EmptyT              =  []
+sectores (Nodet s sizq sder) =  idDelSector s : sectores sizq ++ sectores sder
+
+
+idDelSector :: Sector -> [SectorId]
+idDelSector S (sid  _ _) = [sid]
