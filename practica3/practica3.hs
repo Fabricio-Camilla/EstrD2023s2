@@ -207,10 +207,12 @@ unificarNivelesDe (y:ys) (x:xs)= (y ++ x) : unificarNivelesDe ys xs
 --ej12
 ramaMasLarga :: Tree a -> [a]
 ramaMasLarga EmptyT          = []
-ramaMasLarga (NodeT x ti td) = if length(ramaMasLarga ti) > length(ramaMasLarga td) 
-                               then x : ramaMasLarga ti 
-                               else x : ramaMasLarga td
-
+ramaMasLarga (NodeT x ti td) = x : laRamaMasLarga (ramaMasLarga ti) (ramaMasLarga td)
+  
+laRamaMasLarga :: [a] -> [a] -> [a]
+laRamaMasLarga xs  ys = if length xs > length ys 
+                               then xs 
+                               else ys
 
 --ej13
 todosLosCaminos :: Tree a -> [[a]]
@@ -262,7 +264,7 @@ simpProd ex1        (Valor 0)  = Valor 0
 simpProd ex1          ex2      = Prod ex1 ex2
 
 simpNeg :: ExpA -> ExpA 
-simpNeg Neg (ex1) = ex1
+simpNeg (Neg ex1) = ex1
 simpNeg     ex1   = Neg ex1
 
 
