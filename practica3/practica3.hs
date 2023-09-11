@@ -262,8 +262,8 @@ simpProd ex1        (Valor 0)  = Valor 0
 simpProd ex1          ex2      = Prod ex1 ex2
 
 simpNeg :: ExpA -> ExpA 
-simpNeg (Neg (Neg (ex1))) = ex1
-simpNeg     ex1           = ex1
+simpNeg Neg (ex1) = ex1
+simpNeg     ex1   = Neg ex1
 
 
 --a) 0 + x = x + 0 = x
