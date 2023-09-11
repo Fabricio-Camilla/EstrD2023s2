@@ -207,7 +207,7 @@ unificarNivelesDe (y:ys) (x:xs)= (y ++ x) : unificarNivelesDe ys xs
 --ej12
 ramaMasLarga :: Tree a -> [a]
 ramaMasLarga EmptyT          = []
-ramaMasLarga (NodeT x ti td) = if (sizeT ti) > ( sizeT td) 
+ramaMasLarga (NodeT x ti td) = if length(ramaMasLarga ti) > length(ramaMasLarga td) 
                                then x : ramaMasLarga ti 
                                else x : ramaMasLarga td
 
