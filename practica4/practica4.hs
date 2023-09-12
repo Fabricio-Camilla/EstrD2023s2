@@ -72,11 +72,16 @@ cantCapasPorPizza  (p:ps) = (cantidadDeCapas p , p) :  cantCapasPorPizza ps
 
 
 data Dir = Izq | Der
+   deriving Show
 data Objeto = Tesoro | Chatarra
+   deriving Show
 data Cofre = Cofre [Objeto]
+     deriving Show
 data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
+    deriving Show
 
 camino =  (Bifurcacion (Cofre []) (Fin (Cofre[])) (Fin (Cofre[Tesoro])))
+
 --ej1
 hayTesoro :: Mapa -> Bool
 hayTesoro (Fin cof)              = hayTerosoroAhora cof
@@ -96,12 +101,44 @@ esTesoro    _   = False
 
 --ej2
 
---hayTesoroEn :: [Dir] -> Mapa -> Bool
---hayTesoroEn    []             (Fin cof)        =
---hayTesoroEn (dir:dirs) (Bifurcacion cof m1 m2) = 
+hayTesoroEn :: [Dir] -> Mapa -> Bool
+hayTesoroEn    []               a              = hayTerosoroAhoraEnMapa a 
+hayTesoroEn    _              (Fin _)          = False
+hayTesoroEn (dir:dirs) (Bifurcacion cof m1 m2) = if esIzquierda dir 
+                                                then hayTesoroEn dirs m1 
+                                                else hayTesoroEn dirs m2 
+
+esIzquierda :: Dir -> Bool
+esIzquierda  Izq = True
+esIzquierda   _  = False
+
+hayTerosoroAhoraEnMapa :: Mapa -> Bool
+hayTerosoroAhoraEnMapa (Fin cof)             = hayTerosoroAhora cof
+hayTerosoroAhoraEnMapa (Bifurcacion cof _ _) = hayTerosoroAhora cof
+
+caminoAlTesoro :: Mapa -> [Dir]
+--Precond: existe un tesoro y es unico
+caminoAlTesoro (Fin cof)               = hayTesoroOError cof 
+caminoAlTesoro (Bifurcacion cof m1 m2) =  if hayTerosoroAhora cof
+                                          then []
+                                          else if hayTesoro m1 
+                                                then Izq : (caminoAlTesoro m1) 
+                                                else Der : (caminoAlTesoro m2)
+
+hayTesoroOError:: Cofre -> [a]
+hayTesoroOError (Cofre obs) = if tieneTesoro obs
+                              then []
+                              else error "Debe haber al menos un tesoro" 
 
 
 
+cofre1 = (Cofre [Chatarra,Tesoro])
+cofre2 = (Cofre [Chatarra, Chatarra ])
+cofre3 = (Cofre [Chatarra, Chatarra, Chatarra,Tesoro])
+cofre4 = (Cofre [Tesoro, Tesoro])
+cofre5 = (Cofre [Tesoro, Chatarra, Tesoro])
+
+mapa1 = (Bifurcacion cofre2 (Fin cofre1) (Fin cofre3))
 data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
 
 data Barril = Comida | Oxigeno | Torpedo | Combustible
@@ -116,14 +153,15 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
 
 data Nave = N (Tree Sector)
 
-nave=N(NodeT S("sector1",[LanzaTorpedos], ["sho"]) S("sector2", [LanzaTorpedos], ["sho2"]) )
+--nave=N(NodeT S("sector1",[LanzaTorpedos], ["sho"]) S("sector2", [LanzaTorpedos], ["sho2"]) )
 
---ej1
+{---ej1
 sectores :: Nave -> [SectorId]
 --Propósito: Devuelve todos los sectores de la nave.
 sectores EmptyT              =  []
-sectores (Nodet s sizq sder) =  idDelSector s : sectores sizq ++ sectores sder
+sectores (NodeT s sizq sder) =  idDelSector s : sectores sizq ++ sectores sder
 
 
 idDelSector :: Sector -> [SectorId]
-idDelSector S (sid  _ _) = [sid]
+--idDelSector S(sid comps trip) = [sid] -}
+
