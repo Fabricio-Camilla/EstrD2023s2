@@ -116,6 +116,8 @@ hayTerosoroAhoraEnMapa :: Mapa -> Bool
 hayTerosoroAhoraEnMapa (Fin cof)             = hayTerosoroAhora cof
 hayTerosoroAhoraEnMapa (Bifurcacion cof _ _) = hayTerosoroAhora cof
 
+
+--ej3
 caminoAlTesoro :: Mapa -> [Dir]
 --Precond: existe un tesoro y es unico
 caminoAlTesoro (Fin cof)               = hayTesoroOError cof 
@@ -130,7 +132,36 @@ hayTesoroOError (Cofre obs) = if tieneTesoro obs
                               then []
                               else error "Debe haber al menos un tesoro" 
 
+--ej4
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]  
+caminoDeLaRamaMasLarga (Fin cof)               =   
+caminoDeLaRamaMasLarga (Bifurcacion cof m1 m2) = if length caminoDeLaRamaMasLarga m1 > length caminoDeLaRamaMasLarga m2
+                                                 then Izq : caminoDeLaRamaMasLarga m1
+                                                 else Der : caminoDeLaRamaMasLarga m2
 
+--ej5
+tesorosPorNivel :: Mapa -> [[Objeto]]
+tesorosPorNivel (Fin cof)              = objetosDelCofre cof
+tesorosPorNivel (Bifurcacion cf m1 m2) = if (hayTerosoroAhora cf) 
+                                         then agregarObejtoATodos cf (tesorosPorNivel m1) ++ agregarObejtoATodos cf (tesorosPorNivel m2)
+                                         else tesorosPorNivel m1 ++ tesorosPorNivel m2
+
+agregarObejtoATodos :: Cofre -> [[Objeto]] -> [[Objeto]]
+agregarObejtoATodos   (Cofre obs)  objs = agregarTesoro obs objs 
+
+agregarTesoro :: [Objeto] -> [[Objeto]] ->[[Objeto]]
+agregarTesoro  []         _    = []
+agregarTesoro   _         []   = []
+agregarTesoro  (ob: obs) objs  = if esTesoro ob then ob : objs else agregarTesoro obs objs 
+
+--ej6 
+todosLosCaminos :: Mapa -> [[Dir]]
+todosLosCaminos (Fin cof)               = []
+todosLosCaminos (Bifurcacion cof m1 m2) = agregarATodos (Izq  todosLosCaminos m1) ++ agregarATodos (Der  todosLosCaminos m2)
+
+agregarATodos :: Dir -> [[Dir]] -> [[Dir]]
+agregarATodos dir    []    = []
+agregarATodos dir (dr:dss) = (dir : dr ) : agregarATodos dss
 
 cofre1 = (Cofre [Chatarra,Tesoro])
 cofre2 = (Cofre [Chatarra, Chatarra ])
@@ -160,8 +191,22 @@ sectores :: Nave -> [SectorId]
 --Propósito: Devuelve todos los sectores de la nave.
 sectores EmptyT              =  []
 sectores (NodeT s sizq sder) =  idDelSector s : sectores sizq ++ sectores sder
+-}
+
+idDelSector :: Sector -> SectorId
+idDelSector (S sid comps trip) = sid
 
 
-idDelSector :: Sector -> [SectorId]
---idDelSector S(sid comps trip) = [sid] -}
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+agregarASector comps sId (N tr) = N extenderSector comps sId tr
 
+
+extenderSector :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+extenderSector comps sId EmptyT           = EmptyT
+extenderSector comps sId (NodeT s t1 t2)  =  if sId == idDelSector s 
+                                             then (NodeT (agregarLe comps s) t1 t2 )
+                                             else (NodeT s (extenderSector comps sId t1) (extenderSector comps sId t2 ))
+
+agregarLe :: [Componente] -> Sector -> [Componente]
+agregarLe  []          s            =  []
+agregarLe  comps  (S id comPs trip) =  comps : comPs
