@@ -139,20 +139,28 @@ caminoDeLaRamaMasLarga (Bifurcacion cof m1 m2) = if length caminoDeLaRamaMasLarg
                                                  then Izq : caminoDeLaRamaMasLarga m1
                                                  else Der : caminoDeLaRamaMasLarga m2
 
+
+
 --ej5
 tesorosPorNivel :: Mapa -> [[Objeto]]
 tesorosPorNivel (Fin cof)              = objetosDelCofre cof
-tesorosPorNivel (Bifurcacion cf m1 m2) = if (hayTerosoroAhora cf) 
-                                         then agregarObejtoATodos cf (tesorosPorNivel m1) ++ agregarObejtoATodos cf (tesorosPorNivel m2)
-                                         else tesorosPorNivel m1 ++ tesorosPorNivel m2
+tesorosPorNivel (Bifurcacion cf m1 m2) = tesorosDe cf : (unificar (tesorosPorNivel m1) (tesorosPorNivel m2))
+   
+unificar :: [[Objeto]] -> [[Objeto]] ->[[Obejto]]   
+unificar    []           objs      = objs
+unificar    objs          []       = objs 
+unificar (obs:obss) (objs: objss) = (obs ++ objs) : unificar obss objss 
 
-agregarObejtoATodos :: Cofre -> [[Objeto]] -> [[Objeto]]
-agregarObejtoATodos   (Cofre obs)  objs = agregarTesoro obs objs 
 
-agregarTesoro :: [Objeto] -> [[Objeto]] ->[[Objeto]]
-agregarTesoro  []         _    = []
-agregarTesoro   _         []   = []
-agregarTesoro  (ob: obs) objs  = if esTesoro ob then ob : objs else agregarTesoro obs objs 
+tesorosDe :: Cofre -> [Objeto]
+tesorosDe (Cofre obs) = agregarTesoro obs 
+
+
+agregarTesoro :: [Objeto] -> [Objeto]
+agregarTesoro   []   = []
+agregarTesoro  (ob: obs)  = if esTesoro ob then ob : agregarTesoro obs else  agregarTesoro obs
+
+
 
 --ej6 
 todosLosCaminos :: Mapa -> [[Dir]]
