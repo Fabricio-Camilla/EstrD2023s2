@@ -178,7 +178,7 @@ cofre5 = (Cofre [Tesoro, Chatarra, Tesoro])
 
 
 mapa1 = (Bifurcacion cofre2 (Fin cofre1) (Fin cofre3))
-mapa3 = (Bifurcacion cofre2 (Bifurcacion cofre2 mapa1 (Bifurcacion cofre3 mapa1 (Fin cofre4))) (Fin cofre4))+
+mapa3 = (Bifurcacion cofre2 (Bifurcacion cofre2 mapa1 (Bifurcacion cofre3 mapa1 (Fin cofre4))) (Fin cofre4))
 
 
 data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
@@ -197,17 +197,70 @@ data Nave = N (Tree Sector)
 
 --nave=N(NodeT S("sector1",[LanzaTorpedos], ["sho"]) S("sector2", [LanzaTorpedos], ["sho2"]) )
 
-{---ej1
+--ej1
 sectores :: Nave -> [SectorId]
---Propósito: Devuelve todos los sectores de la nave.
-sectores EmptyT              =  []
-sectores (NodeT s sizq sder) =  idDelSector s : sectores sizq ++ sectores sder
--}
+   --Propósito: Devuelve todos los sectores de la nave.
+sectores (N tr) = idDeLosSectores tr 
+
+idDeLosSectores :: Tree Sector -> [SectorId]
+idDeLosSectores EmptyT              =  []
+idDeLosSectores (NodeT s sizq sder) =  idDelSector s : idDeLosSectores sizq ++ idDeLosSectores sder
 
 idDelSector :: Sector -> SectorId
 idDelSector (S sid comps trip) = sid
 
+--ej2
+poderDePropulsion :: Nave -> Int
+   --Propósito: Devuelve la suma de poder de propulsión de todos los motores de la nave
+poderDePropulsion (N tr) = cantidadDePropulsion tr
 
+cantidadDePropulsion :: Tree Sector -> Int
+cantidadDePropulsion EmptyT          = 0
+cantidadDePropulsion (NodeT s t1 t2) = motorDelSector s + cantidadDePropulsion t1 + cantidadDePropulsion t2
+
+motorDelSector :: Sector -> Int
+motorDelSector (S sid comps trip) = motoresDeLosComponentes comps
+
+motoresDeLosComponentes :: [Componente] -> Int
+motoresDeLosComponentes      []       = 0
+motoresDeLosComponentes  (comp:comps) = if esMotor comp
+                                        then poderDelMotor comp + motoresDeLosComponentes comps
+                                        else motoresDeLosComponentes comps
+
+esMotor :: Componente -> Bool
+esMotor (Motor x) = True
+esMotor   _   = False
+
+poderDelMotor :: Componente -> Int
+poderDelMotor (Motor hp) = hp
+
+barriles :: Nave -> [Barril]
+   --Propósito: Devuelve todos los barriles de la nave
+barriles (N tr) = barrilesDeLosSectores tr
+
+barrilesDeLosSectores :: Tree Sector -> [Barril]
+barrilesDeLosSectores EmptyT          = []
+barrilesDeLosSectores (NodeT s t1 t2) = componentesBarrilDelSector s ++ barrilesDeLosSectores t1 ++ barrilesDeLosSectores t2
+
+componentesBarrilDelSector :: Sector -> [Barril]
+componentesBarrilDelSector (S sid comps trip) = componentesBarriles comps
+
+componentesBarriles :: [Componente] -> [Barril]
+componentesBarriles   []          = []
+componentesBarriles  (comp:comps) = if esAlmacen comp
+                                    then (barrilesDe comp) ++ componentesBarriles comps
+                                    else componentesBarriles comps
+
+esAlmacen :: Componente -> Bool
+esAlmacen (Almacen bars)  = True
+esAlmacen       _         = False
+
+barrilesDe :: Componente -> [Barril]
+barrilesDe  (Almacen bars) = bars
+
+
+--ej4
+   --Propósito: Añade una lista de componentes a un sector de la nave
 agregarASector :: [Componente] -> SectorId -> Nave -> Nave
 agregarASector comps sId (N tr) = (N (extenderSector comps sId tr))
 
