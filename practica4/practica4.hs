@@ -182,19 +182,19 @@ mapa3 = (Bifurcacion cofre2 (Bifurcacion cofre2 mapa1 (Bifurcacion cofre3 mapa1 
 
 
 data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
-
+     deriving Show
 data Barril = Comida | Oxigeno | Torpedo | Combustible
-
+    deriving Show
 data Sector = S SectorId [Componente] [Tripulante]
-
+    deriving Show
 type SectorId = String
 
 type Tripulante = String
 
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
-
+    deriving Show
 data Nave = N (Tree Sector)
-
+    deriving Show
 --nave=N(NodeT S("sector1",[LanzaTorpedos], ["sho"]) S("sector2", [LanzaTorpedos], ["sho2"]) )
 
 --ej1
@@ -274,3 +274,112 @@ extenderSector comps sId (NodeT s t1 t2)  =  if sId == idDelSector s
 agregarLe :: [Componente] -> Sector -> Sector
 agregarLe  []          s            =  s
 agregarLe  comps  (S id comPs trip) =  (S id (comps ++ comPs) trip)
+
+
+--ej5
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+--Propósito: Incorpora un tripulante a una lista de sectores de la nave.
+--Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA trip sIds (N tr) =  (N (nuevoTripulante trip sIds tr))
+
+nuevoTripulante :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+nuevoTripulante trip sIds (NodeT s t1 t2 ) =  if 
+                                then (NodeT (agregarTripulanteAlDeId tirp sIds s) t1 t2)
+                                 else (NodeT s (nuevoTripulante trip sIds t1) (nuevoTripulante trip sIds t2))
+                                                   
+
+agregarTripulanteAlDeId :: Tripulante -> [SectorId] -> Sector -> Sector
+agregarTripulanteAlDeId  trip    []    s =
+agregarTripulanteAlDeId  trip (id:ids) s = if id == idDelSector s
+                                          then aniadirTripulante trip s 
+                                          else agregarTripulanteAlDeId trip ids s 
+
+aniadirTripulante :: Tripulante -> Sector -> Sector
+aniadirTripulante trip (S id comps trips) = S(id comps (tirp : trips))
+
+
+
+
+
+
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+asignarTripulanteA _ [] nave = nave
+asignarTripulanteA tripulante (sectorId:restoSectores) (N arbol) = N (asignarEnArbol tripulante sectorId arbol)
+
+asignarEnArbol :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
+asignarEnArbol _ _ EmptyT = EmptyT
+asignarEnArbol tripulante sectorId (NodeT sector izquierda derecha) = if sectorId == sectorIdDeSector sector
+        then NodeT (asignarTripulante tripulante sector) izquierda derecha
+        else if sectorId < sectorIdDeSector sector
+            then NodeT sector (asignarEnArbol tripulante sectorId izquierda) derecha
+            else NodeT sector izquierda (asignarEnArbol tripulante sectorId derecha)
+
+sectorIdDeSector :: Sector -> SectorId
+sectorIdDeSector (S id _ _) = id
+
+asignarTripulante :: Tripulante -> Sector -> Sector
+asignarTripulante tripulante (S id comps tripulantes) = S id comps (tripulante : tripulantes)
+
+-- Ejemplo de uso:
+-- nuevaNave = asignarTripulanteA "Juan" ["S1", "S2"] miNave
+
+
+
+
+
+
+
+
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
+     deriving Show
+data Barril = Comida | Oxigeno | Torpedo | Combustible
+    deriving Show
+data Sector = S SectorId [Componente] [Tripulante]
+    deriving Show
+type SectorId = String
+
+type Tripulante = String
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+data Nave = N (Tree Sector)
+    deriving Show
+
+treeA_2 = N(NodeT sector_5 (NodeT sector_7 (NodeT sector_3 (EmptyT) (EmptyT)) 
+                                          (NodeT sector_4 (EmptyT) (EmptyT))) 
+                          (NodeT sector_2 (NodeT sector_8 (EmptyT) (EmptyT)) 
+                                          (NodeT sector_1 (EmptyT) (EmptyT))))
+
+
+sector_1 = (S sectorId_1 [componente_1, componente_4] [tripulante_7, tripulante_1])
+sector_2 = (S sectorId_2 [componente_2, componente_3] [tripulante_4, tripulante_5])
+sector_3 = (S sectorId_3 [componente_1, componente_2] [tripulante_3, tripulante_7])
+sector_4 = (S sectorId_4 [componente_2, componente_4] [tripulante_2, tripulante_1])
+sector_5 = (S sectorId_5 [componente_6, componente_4] [tripulante_6, tripulante_5])
+sector_6 = (S sectorId_5 [componente_6, componente_4] [tripulante_2, tripulante_1])
+sector_7 = (S sectorId_5 [componente_6, componente_4] [tripulante_3, tripulante_6])
+sector_8 = (S sectorId_5 [componente_6, componente_4] [tripulante_6, tripulante_1])
+
+tripulante_1 = "Miguel miguelo"
+tripulante_2 = "Otro miguel"
+tripulante_3 = "Tercer tripulante generico"
+tripulante_4 = "Pedro Pascal"
+tripulante_5 = "Papa noel"
+tripulante_6 = "El conejo de pascua"
+tripulante_7 = "otro tripulante generico"
+
+sectorId_1 = "Este es el primer sector"
+sectorId_2 = "Este es el segundo sector"
+sectorId_3 = "Este es el tercer sector"
+sectorId_4 = "Este es el cuarto sector"
+sectorId_5 = "Este es el quinto sector"
+sectorId_6 = "Este es el quinto sector"
+sectorId_7 = "Este es el quinto sector"
+sectorId_8 = "Este es el quinto sector"
+
+componente_1 = LanzaTorpedos
+componente_2 = (Motor 5)
+componente_3 = (Motor 10)
+componente_4 = (Almacen [Comida, Oxigeno])
+componente_5 = (Almacen [Comida, Oxigeno, Combustible])
+componente_6 = (Almacen [Torpedo, Combustible, Combustible])
