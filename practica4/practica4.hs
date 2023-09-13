@@ -176,6 +176,7 @@ cofre3 = (Cofre [Chatarra, Chatarra, Chatarra,Tesoro])
 cofre4 = (Cofre [Tesoro, Tesoro])
 cofre5 = (Cofre [Tesoro, Chatarra, Tesoro])
 
+
 mapa1 = (Bifurcacion cofre2 (Fin cofre1) (Fin cofre3))
 mapa3 = (Bifurcacion cofre2 (Bifurcacion cofre2 mapa1 (Bifurcacion cofre3 mapa1 (Fin cofre4))) (Fin cofre4))+
 
