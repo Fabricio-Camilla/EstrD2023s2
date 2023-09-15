@@ -280,70 +280,55 @@ agregarLe  comps  (S id comPs trip) =  (S id (comps ++ comPs) trip)
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
 --Propósito: Incorpora un tripulante a una lista de sectores de la nave.
 --Precondición: Todos los id de la lista existen en la nave.
-asignarTripulanteA trip sIds (N tr) =  (N (nuevoTripulante trip sIds tr))
+asignarTripulanteA trip sIds (N tr) =  (N (ingresarTripALaNave trip sIds tr))
 
-nuevoTripulante :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
-nuevoTripulante trip sIds (NodeT s t1 t2 ) =  if 
-                                then (NodeT (agregarTripulanteAlDeId tirp sIds s) t1 t2)
-                                 else (NodeT s (nuevoTripulante trip sIds t1) (nuevoTripulante trip sIds t2))
-                                                   
+ingresarTripALaNave :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+ingresarTripALaNave trip []         tr = tr
+ingresarTripALaNave trip (sid:sids) tr = agregarTripAlSectorDeId trip sid (ingresarTripALaNave trip sids tr)
 
-agregarTripulanteAlDeId :: Tripulante -> [SectorId] -> Sector -> Sector
-agregarTripulanteAlDeId  trip    []    s =
-agregarTripulanteAlDeId  trip (id:ids) s = if id == idDelSector s
-                                          then aniadirTripulante trip s 
-                                          else agregarTripulanteAlDeId trip ids s 
+agregarTripAlSectorDeId :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
+agregarTripAlSectorDeId trip sid EmptyT          = EmptyT
+agregarTripAlSectorDeId trip sid (NodeT s t1 t2) = (NodeT (agregaTripASector trip sid s) (agregarTripAlSectorDeId trip sid t1) (agregarTripAlSectorDeId trip sid t2))
 
-aniadirTripulante :: Tripulante -> Sector -> Sector
-aniadirTripulante trip (S id comps trips) = S(id comps (tirp : trips))
+agregaTripASector :: Tripulante -> SectorId -> Sector -> Sector
+agregaTripASector trip sid (S id comps trips) = if sid == id
+                                                then (S id comps (trip : trips)) 
+                                                else (S id comps trips)
 
 
+--ej6
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+--Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+sectoresAsignados trip (N tr) = tripulantesEn tr trip
+
+tripulantesEn :: Tree Sector -> Tripulante -> [SectorId]
+tripulantesEn EmptyT          trip = []
+tripulantesEn (NodeT s t1 t2) trip = (idDelSectorQueEsta s trip) ++ (tripulantesEn t1 trip) ++ (tripulantesEn t2 trip)
+
+idDelSectorQueEsta :: Sector -> Tripulante -> [SectorId]
+idDelSectorQueEsta (S id comps trips) trip = if elem trip trips 
+                                             then [id]
+                                             else []
+
+--ej7
+tripulantes :: Nave -> [Tripulante]
+--Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes (N tr) = sinRepetidos(tripulanteEn tr)
+
+sinRepetidos :: [Tripulante] -> [Tripulante]
+sinRepetidos  []           = []
+sinRepetidos (trip: trips) = if elem trip trips
+                              then sinRepetidos trips
+                              else trip : sinRepetidos trips
+
+tripulanteEn :: Tree Sector -> [Tripulante]
+tripulanteEn     EmptyT      =  []
+tripulanteEn (NodeT s t1 t2) = tripulantesDelSector s ++ tripulanteEn t1 ++ tripulanteEn t2
+
+tripulantesDelSector :: Sector -> [Tripulante]
+tripulantesDelSector (S id comps trips) = trips
 
 
-
-
-asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
-asignarTripulanteA _ [] nave = nave
-asignarTripulanteA tripulante (sectorId:restoSectores) (N arbol) = N (asignarEnArbol tripulante sectorId arbol)
-
-asignarEnArbol :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
-asignarEnArbol _ _ EmptyT = EmptyT
-asignarEnArbol tripulante sectorId (NodeT sector izquierda derecha) = if sectorId == sectorIdDeSector sector
-        then NodeT (asignarTripulante tripulante sector) izquierda derecha
-        else if sectorId < sectorIdDeSector sector
-            then NodeT sector (asignarEnArbol tripulante sectorId izquierda) derecha
-            else NodeT sector izquierda (asignarEnArbol tripulante sectorId derecha)
-
-sectorIdDeSector :: Sector -> SectorId
-sectorIdDeSector (S id _ _) = id
-
-asignarTripulante :: Tripulante -> Sector -> Sector
-asignarTripulante tripulante (S id comps tripulantes) = S id comps (tripulante : tripulantes)
-
--- Ejemplo de uso:
--- nuevaNave = asignarTripulanteA "Juan" ["S1", "S2"] miNave
-
-
-
-
-
-
-
-
-data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
-     deriving Show
-data Barril = Comida | Oxigeno | Torpedo | Combustible
-    deriving Show
-data Sector = S SectorId [Componente] [Tripulante]
-    deriving Show
-type SectorId = String
-
-type Tripulante = String
-
-data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
-    deriving Show
-data Nave = N (Tree Sector)
-    deriving Show
 
 treeA_2 = N(NodeT sector_5 (NodeT sector_7 (NodeT sector_3 (EmptyT) (EmptyT)) 
                                           (NodeT sector_4 (EmptyT) (EmptyT))) 
@@ -383,3 +368,5 @@ componente_3 = (Motor 10)
 componente_4 = (Almacen [Comida, Oxigeno])
 componente_5 = (Almacen [Comida, Oxigeno, Combustible])
 componente_6 = (Almacen [Torpedo, Combustible, Combustible])
+
+
