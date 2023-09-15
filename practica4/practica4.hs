@@ -369,4 +369,106 @@ componente_4 = (Almacen [Comida, Oxigeno])
 componente_5 = (Almacen [Comida, Oxigeno, Combustible])
 componente_6 = (Almacen [Torpedo, Combustible, Combustible])
 
+----------------------
+type Presa = String -- nombre de presa
 
+type Territorio = String -- nombre de territorio
+
+type Nombre = String -- nombre de lobo
+
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre
+   deriving Show
+data Manada = M Lobo
+   deriving Show
+
+
+--ej1
+buenaCaza :: Manada -> Bool
+   --Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías
+buenaCaza (M lobos) = cantidadDeAlimento lobos > cantidadDeCrias lobos
+
+cantidadDeAlimento :: Lobo -> Int
+cantidadDeAlimento (Cria nom)                   = 0
+cantidadDeAlimento (Explorador nom terrs l1 l2) = cantidadDeAlimento l1 + cantidadDeAlimento l2
+cantidadDeAlimento (Cazador nom press l1 l2 l3) = length press + cantidadDeAlimento l1 + cantidadDeAlimento l2 + cantidadDeAlimento l3
+
+cantidadDeCrias :: Lobo -> Int
+cantidadDeCrias (Cria nom)                   = 1
+cantidadDeCrias (Explorador nom terrs l1 l2) = cantidadDeCrias l1 + cantidadDeCrias l2
+cantidadDeCrias (Cazador nom press l1 l2 l3) = cantidadDeCrias l1 + cantidadDeCrias l2 + cantidadDeCrias l3
+
+--ej2
+elAlfa :: Manada -> (Nombre, Int)
+   {-Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto
+   con su cantidad de presas. Nota: se considera que los exploradores y crías tienen cero presas
+   cazadas, y que podrían formar parte del resultado si es que no existen cazadores con más de
+   cero presas.-}
+
+elAlfa (M lb) = esAlfa lb
+
+esAlfa :: Lobo -> (Nombre, Int)
+esAlfa (Cria nom)                   = (nom, 0)
+esAlfa (Explorador nom terrs l1 l2) = tuplaConCantidadMayor (nom, 0) (tuplaConCantidadMayor (esAlfa l1) (esAlfa l2))
+esAlfa (Cazador nom press l1 l2 l3) = (tuplaConCantidadMayor (nom, length press) (tuplaConCantidadMayor (esAlfa l1) (tuplaConCantidadMayor (esAlfa l2) (esAlfa l3))))
+
+
+tuplaConCantidadMayor :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+tuplaConCantidadMayor  t1  t2  = if snd t1 > snd t2
+                                 then t1
+                                 else t2
+
+
+
+
+
+
+
+nombre_1  = "Asesino de bebes"
+nombre_2  = "tanque de guerra"
+nombre_3  = "gurí"
+nombre_4  = "lobo malo"
+nombre_5  = "rapunzel"
+nombre_6  = "scarface"
+nombre_7  = "el Peyu"
+nombre_8  = "ABCDarius"
+nombre_9 = "Astro boy"
+nombre_10 = "King wolf"
+nombre_11 = "La reina Malvada"
+nombre_12 = "Chernabog"
+nombre_13 = "Cristian castro"
+
+presa_1  = "Alce"
+presa_2  = "Bisonte"
+presa_3  = "Benado"
+presa_4  = "Antilope"
+presa_5  = "Ciervo"
+presa_6  = "Renoo"
+presa_7  = "Zorro"
+presa_8  = "Perro"
+presa_9  = "Conejo"
+
+trerritorio_1 = "territorio uno"
+trerritorio_2 = "territorio dos"
+trerritorio_3 = "territorio tres"
+trerritorio_4 = "territorio cuatro"
+trerritorio_5 = "territorio cinco"
+trerritorio_6 = "territorio seis"
+trerritorio_7 = "territorio siete"
+
+lobo_1  = (Cazador nombre_1 [presa_1, presa_2, presa_3, presa_4] lobo_7 lobo_6 lobo_7)
+lobo_2  = (Cazador nombre_5 [presa_5, presa_6, presa_7, presa_1, presa_2] lobo_1 lobo_5 lobo_13)
+
+lobo_4  = (Explorador nombre_4 [trerritorio_1, trerritorio_5, trerritorio_3] lobo_12 lobo_7)
+lobo_5  = (Explorador nombre_5 [trerritorio_1, trerritorio_5, trerritorio_3] lobo_8 lobo_9)
+lobo_6  = (Explorador nombre_6 [trerritorio_6, trerritorio_7, trerritorio_3] lobo_10 lobo_11)
+
+lobo_7  = (Cria nombre_7)
+lobo_8  = (Cria nombre_8)
+lobo_9  = (Cria nombre_9)
+lobo_10 = (Cria nombre_10)
+lobo_11 = (Cria nombre_11)
+lobo_12 = (Cria nombre_12)
+lobo_3  = (Cria nombre_3)
+lobo_13 = (Cria nombre_13)
+
+manada_1 = (M lobo_2)
