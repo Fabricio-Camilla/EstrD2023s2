@@ -431,11 +431,38 @@ exploradoresDelTerritorio tr (Explorador nom terrs l1 l2) = if elem tr terrs
                                                             else exploradoresDelTerritorio tr l1 ++ exploradoresDelTerritorio tr l2
 
 --ej4
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+--Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y 
+--cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron
+--dicho territorio. Los territorios no deben repetirse
+exploradoresPorTerritorio manada = exploradoresQueExploraron manada (territoriosSinRepetir manada) 
+
+exploradoresQueExploraron :: Manada -> [Territorio] -> [(Territorio, [Nombre])]
+exploradoresQueExploraron manada    []    = [] 
+exploradoresQueExploraron manada (tr:trs) = (tr, losQueExploraron tr manada) : exploradoresQueExploraron manada trs
+
+territoriosSinRepetir :: Manada -> [Territorio] 
+territoriosSinRepetir (M lb) = eliminarRepetidos (todosLosterritorios lb)
+
+
+eliminarRepetidos :: [Territorio] -> [Territorio]
+eliminarRepetidos    []    = []
+eliminarRepetidos (tr:trs) = if elem tr trs
+                              then eliminarRepetidos trs
+                              else tr : eliminarRepetidos trs
+
+todosLosterritorios :: Lobo -> [Territorio] 
+todosLosterritorios (Cria nom)                  = []
+todosLosterritorios (Cazador nom pres l1 l2 l3) = todosLosterritorios l1 ++ todosLosterritorios l2 ++ todosLosterritorios l3
+todosLosterritorios (Explorador nom terrs l1 l2)= terrs ++ todosLosterritorios l1 ++ todosLosterritorios l2
 
 
 
 
-
+superioresDelCazador :: Nombre -> Manada -> [Nombre]
+   --Propósito: dado un nombre de cazador y una manada, indica el nombre de todos los
+   --cazadores que tienen como subordinado al cazador dado (directa o indirectamente).
+   --Precondición: hay un cazador con dicho nombre y es único.
 
 
 
