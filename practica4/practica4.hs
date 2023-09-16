@@ -417,6 +417,23 @@ tuplaConCantidadMayor  t1  t2  = if snd t1 > snd t2
                                  then t1
                                  else t2
 
+--ej3
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+   --Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que
+   --pasaron por dicho territorio.
+losQueExploraron tr (M lb) = exploradoresDelTerritorio tr lb 
+
+exploradoresDelTerritorio :: Territorio -> Lobo -> [Nombre]
+exploradoresDelTerritorio tr (Cria nom)                   = []
+exploradoresDelTerritorio tr (Cazador nom press l1 l2 l3) = exploradoresDelTerritorio tr l1 ++ exploradoresDelTerritorio tr l2 ++ exploradoresDelTerritorio tr l3
+exploradoresDelTerritorio tr (Explorador nom terrs l1 l2) = if elem tr terrs
+                                                            then nom : exploradoresDelTerritorio tr l1 ++ exploradoresDelTerritorio tr l2
+                                                            else exploradoresDelTerritorio tr l1 ++ exploradoresDelTerritorio tr l2
+
+--ej4
+
+
+
 
 
 
@@ -471,4 +488,4 @@ lobo_12 = (Cria nombre_12)
 lobo_3  = (Cria nombre_3)
 lobo_13 = (Cria nombre_13)
 
-manada_1 = (M lobo_2)
+manada_1 = (M lobo_1)
