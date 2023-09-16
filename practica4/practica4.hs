@@ -458,12 +458,33 @@ todosLosterritorios (Explorador nom terrs l1 l2)= terrs ++ todosLosterritorios l
 
 
 
-
+--ej5
 superioresDelCazador :: Nombre -> Manada -> [Nombre]
    --Propósito: dado un nombre de cazador y una manada, indica el nombre de todos los
    --cazadores que tienen como subordinado al cazador dado (directa o indirectamente).
    --Precondición: hay un cazador con dicho nombre y es único.
 
+superioresDelCazador nom (M lb) = cazadorConSub nom lb
+
+cazadorConSub :: Nombre -> Lobo -> [Nombre]
+cazadorConSub nom (Cria nomb)                   = []
+cazadorConSub nom (Explorador nomb terrs l1 l2) = cazadorConSub nom (seEncuentra nom  l1 l2)
+cazadorConSub nom (Cazador nomb press l1 l2 l3) = if nom == nomb
+                                                  then []
+                                                  else nomb : cazadorConSub nom (seEncuentra nom l1 (seEncuentra nom l2 l3))
+
+seEncuentra :: Nombre -> Lobo -> Lobo -> Lobo
+seEncuentra nom  l1 l2= if estaElCazador nom l1
+                       then l1
+                       else l2
+
+
+estaElCazador :: Nombre -> Lobo -> Bool
+estaElCazador nom (Cria nomb)                   = False 
+estaElCazador nom (Explorador nomb terrs l1 l2) = estaElCazador nom l1 || estaElCazador nom l2
+estaElCazador nom (Cazador nomb press l1 l2 l3) = if nom == nomb
+                                                 then True
+                                                 else estaElCazador nom l1 || estaElCazador nom l2 || estaElCazador nom l3
 
 
 
@@ -515,4 +536,4 @@ lobo_12 = (Cria nombre_12)
 lobo_3  = (Cria nombre_3)
 lobo_13 = (Cria nombre_13)
 
-manada_1 = (M lobo_1)
+manada_1 = (M lobo_2)
