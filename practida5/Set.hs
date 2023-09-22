@@ -1,5 +1,5 @@
 module Set
-    (Set,emptyS, addS)--, belongs, sizeS, removeS, unionS, setToList)
+    (Set,emptyS, addS,sizeS, belongs)-- , removeS, unionS, setToList)
 where
 
 data Set a = Set [a]
@@ -11,11 +11,14 @@ data Set a = Set [a]
 emptyS :: Set a
 --Crea un conjunto vacío.
 addS :: Eq a => a -> Set a -> Set a
---Dados un elemento y un conjunto, agrega el elemento al conjunto.
-{-belongs :: Eq a => a -> Set a -> Bool
---Dados un elemento y un conjunto indica si el elemento pertenece al conjunto.
+
 sizeS :: Eq a => Set a -> Int
---Devuelve la cantidad de elementos distintos de un conjunto.
+--Dados un elemento y un conjunto, agrega el elemento al conjunto.
+belongs :: Eq a => a -> Set a -> Bool
+--Dados un elemento y un conjunto indica si el elemento pertenece al conjunto.
+
+
+{---Devuelve la cantidad de elementos distintos de un conjunto.
 removeS :: Eq a => a -> Set a -> Set a
 --Borra un elemento del conjunto.
 unionS :: Eq a => Set a -> Set a -> Set a
@@ -25,4 +28,5 @@ setToList :: Eq a => Set a -> [a]
 
 emptyS =Set []
 addS x (Set a) = Set (x : a)
-
+sizeS (Set a) = length a   
+belongs x (Set a) = elem x a

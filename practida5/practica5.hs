@@ -72,15 +72,24 @@ orderar xs = let m = minimo xs
 
 
 ff :: Set Int
-ff = losQuePertenecen [1] (addS 1 emptyS)
+ff = addS 2 (addS 1 emptyS)
 
-{-
-
---Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
 
 losQuePertenecen :: Eq a => [a] -> Set a -> [a]
 --Dados una lista y un conjunto, devuelve una lista con todos los elementos que pertenecen
 --al conjunto.
+losQuePertenecen [] s = []
+losQuePertenecen (x:xs) con = if belongs x con then x : losQuePertenecen xs con else losQuePertenecen xs con
+
+
+{-sinRepetidos :: Eq a => [a] -> [a]
+--Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
+sinRepetidos []
+sinRepetidos (x:xs) = -}
+
+{-
+
+
 
 
 unirTodos :: Eq a => Tree (Set a) -> Set a
