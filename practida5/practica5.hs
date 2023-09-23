@@ -19,7 +19,7 @@ factoriales :: [Int] -> [Int]     --costo cuadratica
 factoriales [] = []
 factoriales (x:xs) = factorial x : factoriales xs 
 
-pertenece :: Eq a => a -> [a] -> Bool   --costo lineal
+{-pertenece :: Eq a => a -> [a] -> Bool   --costo lineal
 pertenece n [] = False
 pertenece n (x:xs) = n == x || pertenece n xs 
 
@@ -27,7 +27,7 @@ sinRepetidos :: Eq a => [a] -> [a]  --costo cuadratica
 sinRepetidos [] = []
 sinRepetidos (x:xs) =if pertenece x xs
                 then sinRepetidos xs
-                else x : sinRepetidos xs
+                else x : sinRepetidos xs-}
    
 
 -- equivalente a (++)
@@ -72,26 +72,26 @@ orderar xs = let m = minimo xs
 
 
 ff :: Set Int
-ff = addS 2 (addS 1 emptyS)
+ff = addS 2 (addS 3(addS 2 (addS 1 emptyS)))
 
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+     deriving Show
 
 losQuePertenecen :: Eq a => [a] -> Set a -> [a]
 --Dados una lista y un conjunto, devuelve una lista con todos los elementos que pertenecen
 --al conjunto.
-losQuePertenecen [] s = []
+losQuePertenecen   []   con = []
 losQuePertenecen (x:xs) con = if belongs x con then x : losQuePertenecen xs con else losQuePertenecen xs con
 
 
-{-sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos :: Eq a => [a] -> [a]
 --Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
-sinRepetidos []
-sinRepetidos (x:xs) = -}
-
-{-
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
 
-
-
-unirTodos :: Eq a => Tree (Set a) -> Set a
+{-unirTodos :: Eq a => Tree (Set a) -> Set a
 --Dado un arbol de conjuntos devuelve un conjunto con la union de todos los conjuntos
---del arbol.-}
+--del arbol.
+unirTodos EmptyT            = emptyS
+unirTodos (NodeT con s1 s2) = unionS con (unionS (unirTodos s1 unirTodos s2))-}
