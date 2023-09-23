@@ -94,7 +94,6 @@ sinRepetidos [] = []
 sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
 
-
 {-unirTodos :: Eq a => Tree (Set a) -> Set a
 --Dado un arbol de conjuntos devuelve un conjunto con la union de todos los conjuntos
 --del arbol.
