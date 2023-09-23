@@ -1,11 +1,11 @@
-module Set
+module Setv2
     (Set,emptyS, addS,sizeS, belongs , removeS, unionS, setToList)
 where
 
 data Set a = Set [a]
 {-
     INV.REP:
-        *el conjunto Set no contiene elementos repetidos
+        *el conjunto Set contiene elementos repetidos
 -}
 
 emptyS :: Set a
@@ -30,18 +30,16 @@ setToList :: Eq a => Set a -> [a]
 --Dado un conjunto devuelve una lista con todos los elementos distintos del conjunto.
 
 emptyS             = Set []
-addS   x   (Set a) = Set (agregarSinRepetir x a)
+addS   x   (Set a) = Set (x : a)
 sizeS      (Set a) = length a
 belongs x  (Set a) = elem x a
 removeS x  (Set a) = Set (eliminar x a)
 unionS se1 (Set a) = unificar a se1 
-setToList  (Set a) = a 
+setToList  (Set a) = sinRepetidos a
 
-
-
-agregarSinRepetir :: Eq a => a -> [a] -> [a]
-agregarSinRepetir x   []   = [x]
-agregarSinRepetir x (y:ys) = if x == y then agregarSinRepetir x ys else y : agregarSinRepetir x ys
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
 unificar :: Eq a => [a] -> Set a -> Set a 
 unificar []     con = con

@@ -1,4 +1,5 @@
-import Set
+--import Set
+import Setv2
 
 
 head' :: [a] -> a  --costo constante
@@ -74,6 +75,9 @@ orderar xs = let m = minimo xs
 ff :: Set Int
 ff = addS 2 (addS 3(addS 2 (addS 1 emptyS)))
 
+ff' :: Set Int
+ff' = addS 4 (addS 5(addS 7 (addS 8 emptyS)))
+
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
      deriving Show
 
@@ -88,6 +92,7 @@ sinRepetidos :: Eq a => [a] -> [a]
 --Quita todos los elementos repetidos de la lista dada utilizando un conjunto como estructura auxiliar.
 sinRepetidos [] = []
 sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
+
 
 
 {-unirTodos :: Eq a => Tree (Set a) -> Set a
