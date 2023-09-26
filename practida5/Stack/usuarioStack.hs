@@ -17,4 +17,4 @@ insertarEnPos :: Int -> a -> Stack a -> Stack a
 --Dada una posicion válida en la stack y un elemento, ubica dicho elemento en dicha
 --posición (se desapilan elementos hasta dicha posición y se inserta en ese lugar).
 insertarEnPos 0 x pila = push x pila
-insertarEnPos n x pila = insertarEnPos (n-1) x (pop pila)
+insertarEnPos n x pila = push (top pila) (insertarEnPos (n-1) x (pop pila))
