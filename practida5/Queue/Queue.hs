@@ -28,3 +28,33 @@ enqueue x (Queue a) = Queue (a ++ [x]) --lineal
 firstQ    (Queue a) = head a           --parcial - constante
 dequeue   (Queue a) = (Queue (tail a)) --parcial - constante
 
+
+
+
+---------------------------
+--queue con dos listas
+emptyQ :: Queue a
+emptyQ = QQ [] []
+-- si fs esta vacia bs tambien esta vacia
+-- fs primero lista, bs segunda lista
+
+
+isEmptyQ  :: Queue a -> Bool
+isEmptyQ (QQ fs _) = null fs
+
+firstQ :: Queue a -> a
+firstQ (QQ fs _)= head fs
+
+enqueue :: a -> Queue a -> Queue a
+enqueue x (QQ fs bs) = if null fs then QQ (x:fs) bs else  QQ fs (x:bs)
+
+dequeue :: Queue a -> Queue a
+dequeue (QQ fs bs) = if (null (tail fs)) then QQ(reverse bs) [] else QQ(tail fs) bs 
+
+
+
+
+
+
+
+
