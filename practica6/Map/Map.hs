@@ -1,5 +1,5 @@
 module Map 
-    (emptyM, assocM, lookupM, deleteM, keys)
+    (Map,emptyM, assocM, lookupM, deleteM, keys)
 where
 
 data Map k v = MP [(k,v)]
@@ -23,8 +23,8 @@ keys (MP xs) = claves xs
 
 
 agregar :: Eq k => k ->  v -> [(k,v)] -> [(k,v)]
-agregar k v [] = []
-agregar k v ((k1, v1):xs) = if k==k1 then (k, v1): xs else (k1,v1) : (agregar k v xs)
+agregar k v     []        = [(k,v)]
+agregar k v ((k1, v1):xs) = if k==k1 then (k, v): xs else (k1,v1) : (agregar k v xs)
 
 
 lookUp :: Eq k => k -> [(k,v)] -> Maybe v
