@@ -4,17 +4,19 @@ ff = assocM 2 4 (assocM 1 2 emptyM)
 
 ff' :: Map Int Int
 ff' =  assocM 2 8 $ assocM 3 4 (assocM 4 2 emptyM)
-
-valuesM :: Eq k => Map k v -> [Maybe v]
+valuesM :: Eq k => Map k v -> [Maybe v]   --O(keys)= O(K)
 --Propósito: obtiene los valores asociados a cada clave del map.
+--costo: O(K log K) por que a cada k le obtengo el valor.
 valuesM mp = todosLosValoresDe (keys mp) mp 
 
-todosLosValoresDe :: Eq k =>  [k] -> Map k v -> [Maybe v]
+todosLosValoresDe :: Eq k =>  [k] -> Map k v -> [Maybe v]  --O(lookupM)= O(log K)  
 todosLosValoresDe []     mp = []
 todosLosValoresDe (k:ks) mp = (lookupM k mp) : (todosLosValoresDe ks mp)
 
 todasAsociadas :: Eq k => [k] -> Map k v -> Bool
 --Propósito: indica si en el map se encuentran todas las claves dadas.
+--costo: O(K) porque solamente utilizo la funcion "keys" y la subtarea "todasLasClaves" es de costo lineal
+-- porque busca si se encuentra en la lista dada.
 todasAsociadas ks mp = todasLasClaves ks (keys mp)
 
 todasLasClaves :: Eq k => [k] -> [k] -> Bool
@@ -22,15 +24,20 @@ todasLasClaves   [k]  ks2 = elem k ks2
 todasLasClaves (k:ks) ks2 = elem k ks2 && todasLasClaves ks ks2
 
 listToMap :: Eq k => [(k, v)] -> Map k v
---Propósito: convierte una lista de pares clave valor en un map.
+--Propósito: convierte una lista de pares clave valor en un map.  --O(assocM) = O(log K)
+--costo: O(log K) por que por cada k se le pide el valor, no recorro otra cosa que no sea K
 listToMap     []     = emptyM
 listToMap ((k,v):xs) = assocM k v (listToMap xs) 
 
-mapToList :: Eq k => Map k v -> [(k, v)]
+mapToList :: Eq k => Map k v -> [(k, v)]     
 --Propósito: convierte un map en una lista de pares clave valor.
+--O(keys) = O(K) 
+--O(valoresDe)= O(log K)
+-- O(K) + O(log K) = O(K log K)por que por a cada k se le pide el valor.
 mapToList mp = valoresDe (keys mp) mp 
 
-valoresDe :: Eq k => [k] -> Map k v -> [(k,v)]
+valoresDe :: Eq k => [k] -> Map k v -> [(k,v)] --O(lookupM K)= O(log K)
+--costo: O(log K) por que a cada k le pido el valor y lo agrega constantemente a la lista de tuplas
 valoresDe   []   mp = []
 valoresDe (k:ks) mp = case lookupM k mp of
                       Just x -> (k,x) : (valoresDe ks mp)

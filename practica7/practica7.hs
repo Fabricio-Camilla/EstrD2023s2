@@ -51,18 +51,18 @@ splitMaxBST (NodeT a ti EmptyT) = (a,ti)
 splitMaxBST (NodeT a ti td)     = let (x, td') = splitMaxBST td
                                     in (x, NodeT x ti td')
 
-esBST :: Tree a -> Bool
+esBST ::Ord a => Tree a -> Bool
 --Propósito: indica si el árbol cumple con los invariantes de BST.
 --Costo: O(N2)
 esBST   EmptyT       = True
 esBST (NodeT a ti td)= esMenorQueTodos a td &&  esMayorQueTodos a ti && esBST ti && esBST td
 
-esMenorQueTodos :: a -> Tree a -> Bool
+esMenorQueTodos :: Ord a => a -> Tree a -> Bool
 -- precond: debe estar orndenado
 esMenorQueTodos x EmptyT          = True
 esMenorQueTodos x (NodeT a ti td) = if x < a then esMenorQueTodos x ti  else False
 
-esMayorQueTodos ::  a -> Tree a -> Bool
+esMayorQueTodos :: Ord a => a -> Tree a -> Bool
 -- precond: debe estar orndenado
 esMayorQueTodos x EmptyT          = True
 esMayorQueTodos x (NodeT a ti td) = if x > a then esMayorQueTodos x td  else False
@@ -80,17 +80,30 @@ maximoSiEsMenor x y     EmptyT     = Just y
 maximoSiEsMenor x y (NodeT a ti td)= if x < a then maximoSiEsMenor x a td else Just y
 
 
-maxBST :: Ord a => Tree a -> a 
---Precond: El tree dado no puede ser vacio.
-maxBST (NodeT a ti td)=  a    
-maxBST (NodeT a ti td)= maxBST td 
-
-
-
-{-elMinimoMayorA :: Ord a => a -> Tree a -> Maybe a
+elMinimoMayorA :: Ord a => a -> Tree a -> Maybe a
 --Propósito: dado un BST y un elemento, devuelve el mínimo elemento que sea mayor al elemento dado.
 --Costo: O(log N)
+elMinimoMayorA x EmptyT = Nothing
+elMinimoMayorA x (NodeT a ti td) = if x > a then minimoSiEsMayor x a ti
+                                            else elMinimoMayorA x td
+
+minimoSiEsMayor :: Ord a => a -> a -> Tree a -> Maybe a 
+minimoSiEsMayor x y     EmptyT      = Just y
+minimoSiEsMayor x y (NodeT a ti td) = if x > a then minimoSiEsMayor x a ti else Just y
+
 balanceado :: Tree a -> Bool
 --Propósito: indica si el árbol está balanceado. Un árbol está balanceado cuando para cada
 --nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
---Costo: O(N2)-}
+--Costo: O(N2)
+balanceado      EmptyT     = False
+balanceado (NodeT a ti td) = ((heightT ti) - (heightT td)) >= 1 
+
+
+heightT :: Tree a -> Int
+heightT EmptyT          = 0
+heightT (NodeT a t1 t2) = 1 + max (heightT t1)  (heightT t2)
+
+maxBST :: Ord a => Tree a -> a 
+--Precond: El tree dado no puede ser vacio.
+maxBST (NodeT a ti td)=  a    
+maxBST (NodeT a ti td)= maxBST td
