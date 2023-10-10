@@ -96,7 +96,7 @@ balanceado :: Tree a -> Bool
 --nodo la diferencia de alturas entre el subarbol izquierdo y el derecho es menor o igual a 1.
 --Costo: O(N2)
 balanceado      EmptyT     = False
-balanceado (NodeT a ti td) = ((heightT ti) - (heightT td)) >= 1 
+balanceado (NodeT a ti td) = mod ((heightT ti) - (heightT td)) >= 1 
 
 
 heightT :: Tree a -> Int
