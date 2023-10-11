@@ -1,5 +1,6 @@
 module Empresa
-       (Empresa,)
+       (Empresa,consEmpresa,buscarPorCUIL,empleadosDelSector,todosLosCUIL,
+       todosLosSectores,agregarSector,agregarEmpleado,agregarASector,borrarEmpleado)
 where
 
 import Map
@@ -65,14 +66,46 @@ todosLosCUIL (ConsE sec emple) = keys sec
 agregarSector :: SectorId -> Empresa -> Empresa
 --Propósito: agrega un sector a la empresa, inicialmente sin empleados.
 --Costo: O(logS)
+agregarSector sId (ConsE secs emple) = case lookupM sId secs of 
+                                     Nothing  -> ConsE secs emple
+                                     Just sec -> ConsE (assocM sId emptyS sec) emple
 
 agregarEmpleado :: [SectorId] -> CUIL -> Empresa -> Empresa
 --Propósito: agrega un empleado a la empresa, en el que trabajará en dichos sectores y tendrá el CUIL dado.
 --Costo: calcular.
+agregarEmpleado sIds c (ConsE sec emples) = let e = incorporarSectores sIds (consEmpleado c)
+                                            in ConsE (asignarEmpleadoASectores sIds e sec) (assocM c e emples)
+
+
+incorporarSectores :: [SectorId] -> Empleado -> Empleado
+incorporarSectores     []     e = e
+incorporarSectores (sId:sIds) e = incorporarSector sId (incorporarSectores sIds e) 
+
+asignarEmpleadoASectores :: [SectorId] -> Empleado -> Map SectorId (Set Empleado) -> Map SectorId (Set Empleado)
+asignarEmpleadoASectores     []     e mSec = mSec
+asignarEmpleadoASectores (sid:sids) e mSec =  case (lookupM sid mSec) of 
+                                              Just emples -> assocM sid (addS e emples) (asignarEmpleadoASectores sids e mSec )
+                                              Nothing -> asignarEmpleadoASectores sids e mSec
+            
 agregarASector :: SectorId -> CUIL -> Empresa -> Empresa
 --Propósito: agrega un sector al empleado con dicho CUIL.
 --Costo: calcular.
+agregarASector sId c (ConsE sec emples) = case (lookupM c emples) of
+                                          Nothing -> (ConsE sec emples)
+                                          Just e  -> (ConsE (asignarASector e sId sec) emples)
+
+asignarASector :: Empleado -> SectorId -> Map SectorId(Set Empleado) -> Map SectorId(Set Empleado)
+asignarASector e sid mSec = case (lookUp sid mSec) of
+                            Nothing -> mSec
+                            Just emples -> assocM sid (agregarSiNoPertenece e emples)
+
+agregarSiNoPertenece :: Empleado -> Set Empleado -> Set Empleado
+agregarSiNoPertenece e emples = if belongs e emples then addS e emples else emples
+
 borrarEmpleado :: CUIL -> Empresa -> Empresa
 --Propósito: elimina al empleado que posee dicho CUIL.
 --Costo: calcular.
+borrarEmpleado c (ConsE sec emples) = ConsE (deleteM c sec) (deleteM c emples)
 
+data Empresa  = ConsE (Map SectorId (Set Empleado))
+                     (Map CUIL Empleado)
