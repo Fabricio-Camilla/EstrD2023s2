@@ -66,4 +66,6 @@ borrarEmpleado :: CUIL -> Empresa -> Empresa
 --Costo: calcular.
 
 
-empleadoDeCUIL :: 
+empleadoDeCUIL :: CUIL -> [Empleado] -> Empleado
+empleadoDeCUIL n    []    = 
+empleadoDeCUIL n (e:emps) = if n == (cuil e) then e else empleadoDeCUIL n emps
