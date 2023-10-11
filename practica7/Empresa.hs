@@ -1,10 +1,13 @@
 module Empresa
-       (Empresa, consEmpleado, cuil, incorporarSector, sectores)
+       (Empresa,)
 where
 
+import Map
+import Set
+
 type SectorId = Int
-type CUIL = Int
-data Empresa = ConsE (Map SectorId (Set Empleado))
+type CUIL     = Int
+data Empresa  = ConsE (Map SectorId (Set Empleado))
                      (Map CUIL Empleado)
 
 {-
@@ -17,12 +20,29 @@ data Empresa = ConsE (Map SectorId (Set Empleado))
 
 
 
+{- consEmpleado :: CUIL -> Empleado
+    Propósito: construye un empleado con dicho CUIL.
+    Costo: O(1)
+cuil :: Empleado -> CUIL
+    Propósito: indica el CUIL de un empleado.
+    Costo: O(1)
+incorporarSector :: SectorId -> Empleado -> Empleado
+    Propósito: incorpora un sector al conjunto de sectores en los que trabaja un empleado.
+    Costo: O(log S), siendo S la cantidad de sectores que el empleado tiene asignados.
+sectores :: Empleado -> [SectorId]
+    Propósito: indica los sectores en los que el empleado trabaja.
+    Costo: O(S)
+-}
 consEmpresa :: Empresa
 --Propósito: construye una empresa vacía.
 --Costo: O(1)
+consEmpresa = ConsE  emptyM  emptyS
+
 buscarPorCUIL :: CUIL -> Empresa -> Empleado
 --Propósito: devuelve el empleado con dicho CUIL.
 --Costo: O(log E)
+buscarPorCUIL c (ConsE sec emple) = empleadoDeCUIL c emple
+
 empleadosDelSector :: SectorId -> Empresa -> [Empleado]
 --Propósito: indica los empleados que trabajan en un sector dado.
 --Costo: O(logS + E)
@@ -44,3 +64,6 @@ agregarASector :: SectorId -> CUIL -> Empresa -> Empresa
 borrarEmpleado :: CUIL -> Empresa -> Empresa
 --Propósito: elimina al empleado que posee dicho CUIL.
 --Costo: calcular.
+
+
+empleadoDeCUIL :: 
