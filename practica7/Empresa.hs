@@ -41,20 +41,31 @@ consEmpresa = ConsE  emptyM  emptyS
 buscarPorCUIL :: CUIL -> Empresa -> Empleado
 --Propósito: devuelve el empleado con dicho CUIL.
 --Costo: O(log E)
-buscarPorCUIL c (ConsE sec emple) = empleadoDeCUIL c emple
+buscarPorCUIL c (ConsE sec emple) = case lookupM c emple of 
+                                    Just e -> e
+                                    Nothing -> "Error no existe el empleado con el CUIL dado"
 
 empleadosDelSector :: SectorId -> Empresa -> [Empleado]
 --Propósito: indica los empleados que trabajan en un sector dado.
 --Costo: O(logS + E)
+empleadosDelSector sId (ConsE sec emple) = case lookupM sId sec of
+                                           Just emps -> emps
+                                           Nothing   -> "Error no hay empleados asignados ese sector"
+
 todosLosCUIL :: Empresa -> [CUIL]
 --Propósito: indica todos los CUIL de empleados de la empresa.
 --Costo: O(E)
+todosLosCUIL (ConsE sec emple) = keys emple
+
 todosLosSectores :: Empresa -> [SectorId]
 --Propósito: indica todos los sectores de la empresa.
 --Costo: O(S)
+todosLosCUIL (ConsE sec emple) = keys sec
+
 agregarSector :: SectorId -> Empresa -> Empresa
 --Propósito: agrega un sector a la empresa, inicialmente sin empleados.
 --Costo: O(logS)
+
 agregarEmpleado :: [SectorId] -> CUIL -> Empresa -> Empresa
 --Propósito: agrega un empleado a la empresa, en el que trabajará en dichos sectores y tendrá el CUIL dado.
 --Costo: calcular.
@@ -65,7 +76,3 @@ borrarEmpleado :: CUIL -> Empresa -> Empresa
 --Propósito: elimina al empleado que posee dicho CUIL.
 --Costo: calcular.
 
-
-empleadoDeCUIL :: CUIL -> [Empleado] -> Empleado
-empleadoDeCUIL n    []    = 
-empleadoDeCUIL n (e:emps) = if n == (cuil e) then e else empleadoDeCUIL n emps
