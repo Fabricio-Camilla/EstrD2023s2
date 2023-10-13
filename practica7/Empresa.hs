@@ -107,5 +107,3 @@ borrarEmpleado :: CUIL -> Empresa -> Empresa
 --Costo: calcular.
 borrarEmpleado c (ConsE sec emples) = ConsE (deleteM c sec) (deleteM c emples)
 
-data Empresa  = ConsE (Map SectorId (Set Empleado))
-                     (Map CUIL Empleado)
