@@ -22,7 +22,7 @@ int cantidadDePokemon(Entrenador e){
 
 int cantidadDePokemonDe(TipoDePokemon tipo, Entrenador e){
     int res = 0;
-    for(int i=0; i == (e -> cantPokemon); i++){
+    for(int i=0; i != (e -> cantPokemon); i++){
         if(tipoDePokemon(e->pokemon[i]) == tipo){
         res++;
         }
